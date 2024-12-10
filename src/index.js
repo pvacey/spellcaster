@@ -97,6 +97,9 @@ router.post('/emit', withCookies, async (request, env) => {
 	const reqJSON = await request.json()
 	console.log(reqJSON)
 
+	// go fetch info by ID from 
+	/// https://api2.moxfield.com/v3/cards/editions/${cardID}
+
 	const simpleMessage = {
 		content: `<@${request.cookies.user_id.split('.')[0]}> casts a [spell](${reqJSON.image_url})`,
 		allowed_mentions: {
