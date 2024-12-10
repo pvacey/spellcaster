@@ -5,7 +5,13 @@ import cookieSigner from 'cookie-signature'
 const router = AutoRouter()
 
 function validateCookies(cookies, secret) {
-	return !cookieSigner.unsign(cookies?.user_id, secret) && !cookieSigner.unsign(cookies?.servers, secret);
+	let valid = false
+	if ('user_id' in cookies && 'servers' in cookies) {
+		if (cookieSigner.unsign(cookies.user_id, secret) !== false && cookieSigner.unsign(cookies.servers, secret) !== false) {
+			valid = true
+		}
+	}
+	return valid
 }
 
 function ensureAuth(request, secret) {
