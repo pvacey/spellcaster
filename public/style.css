@@ -175,7 +175,7 @@ input[type="range"]::-moz-range-thumb {
     -webkit-animation-iteration-count: 1;
     -webkit-animation-timing-function: ease;
     /* -webkit-animation-fill-mode: backwards; */
-    transition: z-index 2s;
+    /* transition: z-index 2s; */
   }
   
 @-webkit-keyframes cssAnimation {

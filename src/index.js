@@ -5,13 +5,7 @@ import cookieSigner from 'cookie-signature'
 const router = AutoRouter()
 
 function validateCookies(cookies, secret) {
-	let valid = false
-	if ('user_id' in cookies && 'servers' in cookies) {
-		if (cookieSigner.unsign(cookies.user_id, secret) !== false && cookieSigner.unsign(cookies.servers, secret) !== false) {
-			valid = true
-		}
-	}
-	return valid
+	return !cookieSigner.unsign(cookies?.user_id, secret) && !cookieSigner.unsign(cookies?.servers, secret);
 }
 
 function ensureAuth(request, secret) {
@@ -103,19 +97,20 @@ router.post('/emit', withCookies, async (request, env) => {
 	const reqJSON = await request.json()
 	console.log(reqJSON)
 
+	const simpleMessage = {
+		content: `<@${request.cookies.user_id.split('.')[0]}> casts a [spell](${reqJSON.image_url})`,
+		allowed_mentions: {
+			parse: ["users"]
+		}
+	}
+
 	const response = await fetch(`https://discord.com/api/v10/channels/${env.DISCORD_CHANNEL_ID}/messages`, {
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bot ${env.DISCORD_BOT_TOKEN}`
 		},
 		method: "POST",
-		body: JSON.stringify({
-			// content: reqJSON.image_url,
-			content: `<@${request.cookies.user_id.split('.')[0]}> casts a [spell](${reqJSON.image_url})`,
-			allowed_mentions: {
-				parse: ["users"]
-			}
-		})
+		body: JSON.stringify(simpleMessage)
 	});
 	const whatever = await response.json()
 	console.log(whatever)
@@ -135,3 +130,14 @@ router.get('/auth-status', withCookies, (request, env) => {
 router.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default router
+
+
+// let example = 
+//   {
+//     description: "",
+//     fields: [],
+//     image: {
+//       url: "https://images-ext-1.discordapp.net/external/MSeHQK3-X4dckR9yJ_k-ZrHR7sQBa9JegVb2arpjvNw/https/spelltable.danielcigrang.workers.dev/_drc?format=webp&width=489&height=682"
+//     },
+//     color: 5462587
+//   }

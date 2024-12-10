@@ -149,7 +149,7 @@ async function imageClick(event) {
     event.target.className = 'clicked';
     setTimeout(() => {
         event.target.classList.remove('clicked');
-    }, 2000);
+    }, 250);
 
     const response = await fetch(`${window.location}emit`, {
 		headers: {
@@ -157,13 +157,13 @@ async function imageClick(event) {
 		},
 		method: "POST",
 		body: JSON.stringify({
+            image_name: event.target.alt,
 			image_url: event.target.src
 		}),
 	});
     if (response.status === 401) {
         window.location = window.location + 'login'
     }
-    
 }
 
 async function checkLogin() {
