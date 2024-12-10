@@ -21,7 +21,7 @@ function ensureAuth(request, secret) {
 }
 
 router.get('/login', async (request, env) => {
-	return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(env.DISCORD_REDIRECT_URI)}&scope=identify`)
+	return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(env.DISCORD_REDIRECT_URI)}&scope=identify+guilds`)
 });
 
 
