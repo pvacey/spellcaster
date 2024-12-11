@@ -65,7 +65,7 @@ img {
     box-shadow: 0px 0px 10px rgb(102, 102, 102);
 }
 
-.typeBox {
+.cardBox {
     /* padding-top: 10px; */
     display: flex;
     flex-wrap: wrap;
@@ -111,6 +111,7 @@ img {
 }
 
 .sliderContainer {
+    pointer-events: none; 
     /* box-sizing: border-box; */
     position: fixed; /* Set the navbar to fixed position */
     width: 100%;
@@ -132,6 +133,7 @@ img {
 }
 
 .sliderBorder {
+    pointer-events: auto; 
     border-radius: 40px;
     padding: 20px;
     background-color: rgb(255, 255, 255);
