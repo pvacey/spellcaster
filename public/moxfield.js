@@ -1,27 +1,32 @@
 const moxfieldInput = document.getElementById('moxfieldInput');
+const imageSize = document.getElementById('imageSize');
 const inbox = document.getElementById('inbox');
-
-moxfieldInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        processURL();
-        e.preventDefault(); // Prevents default action of Enter key
-    }
-});
+const deck = document.getElementById('deck');
+const cardTypes = {
+    0: 'Commander',
+    1: 'Battle',
+    2: 'Planeswalker',
+    3: 'Creature',
+    4: 'Sorcery',
+    5: 'Instant',
+    6: 'Artifact',
+    7: 'Enchantment',
+    8: 'Land'
+}
 
 function sizeDown() {
-    document.getElementById('imageSize').value++
+    imageSize.value++
     resizeImages()
 }
 
 function sizeUp() {
-    document.getElementById('imageSize').value--
+    imageSize.value--
     resizeImages()
 }
 
 function resizeImages(event) {
-
-    slider = document.getElementById('imageSize');
-    var width = Math.floor((document.getElementById('deck').getBoundingClientRect().width)/slider.value)-1;
+    slider = imageSize;
+    var width = Math.floor((deck.getBoundingClientRect().width)/slider.value)-1;
     document.documentElement.style.setProperty('--image-width', `${width}px`);
     document.documentElement.style.setProperty('--image-radius', `${width *.05  }px`);
 
@@ -30,14 +35,21 @@ function resizeImages(event) {
 }
 
 // resize when window size changes
-onresize = () => {resizeImages()};
+onresize = () => resizeImages();
 // resize when when the slider input changes
-document.getElementById('imageSize').addEventListener("input", () => {resizeImages()});
+imageSize.addEventListener("input", (_) => resizeImages());
 // resize for small screens
-if (document.getElementById('deck').getBoundingClientRect().width < 500) {
-    document.getElementById('imageSize').value = 2;
+if (deck.getBoundingClientRect().width < 500) {
+    imageSize.value = 2;
 }
 
+
+moxfieldInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        processURL();
+        e.preventDefault();
+    }
+});
 
 function processURL() {
     const message = moxfieldInput.value.trim();
@@ -55,23 +67,11 @@ function processURL() {
 
 async function loadDeck(id) {
     // clear the page
-    document.getElementById('deck').innerHTML = '';
+    deck.innerHTML = '';
     // fetch the deck data, load images from it 
     const response = await fetch(`https://corsproxy.io/?url=https://api2.moxfield.com/v3/decks/all/${id}`);
     const {boards} = await response.json();
     loadImages(boards);
-}
-
-const cardTypes = {
-    0: 'Commander',
-    1: 'Battle',
-    2: 'Planeswalker',
-    3: 'Creature',
-    4: 'Sorcery',
-    5: 'Instant',
-    6: 'Artifact',
-    7: 'Enchantment',
-    8: 'Land'
 }
 
 function loadImages(data) {
@@ -82,9 +82,6 @@ function loadImages(data) {
     // collect commanders and sort mainboard cards based on type
     Object.values(data.commanders.cards).forEach(({card}) => bin[0].push(card));
     Object.values(data.mainboard.cards).forEach(({card}) => bin[card.type].push(card));
-
-    //create ontainer element
-    const deck = document.getElementById('deck');
 
     Object.entries(bin).forEach(([cType, cArray]) => {
         // skip it if we don't have that type
@@ -134,7 +131,6 @@ function loadImages(data) {
     resizeImages()
 }
 
-
 async function imageClick(event) {
     // css animation
     event.target.className = 'clicked';
@@ -166,9 +162,11 @@ async function checkLogin() {
     } 
 }
 
-checkLogin()
+document.addEventListener('DOMContentLoaded', () => {
+	checkLogin();
+});
 
-const deckID = localStorage.getItem("deckID");
+const deckID = localStorage.getItem('deckID');
 if (deckID) {
     loadDeck(deckID)
 }
