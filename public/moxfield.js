@@ -53,12 +53,13 @@ function processURL() {
     moxfieldInput.value = '';
 }
 
-function loadDeck(id) {
+async function loadDeck(id) {
+    // clear the page
     document.getElementById('deck').innerHTML = '';
-    fetch(`https://corsproxy.io/?url=https://api2.moxfield.com/v3/decks/all/${id}`)
-    .then(response => response.json())
-    .then(data => loadImages(data))
-    .catch(error => console.error('Error:', error));
+    // fetch the deck data, load images from it 
+    const response = await fetch(`https://corsproxy.io/?url=https://api2.moxfield.com/v3/decks/all/${id}`);
+    const {boards} = await response.json();
+    loadImages(boards);
 }
 
 const cardTypes = {
@@ -73,92 +74,84 @@ const cardTypes = {
     8: 'Land'
 }
 
-function loadImages(deckData) {
+function loadImages(data) {
     
-    const board = {};
+    // sorting bin, an array per card type
+    const bin = {}
+    Object.keys(cardTypes).forEach((typeID) => bin[typeID] = []);
+    // collect commanders and sort mainboard cards based on type
+    Object.values(data.commanders.cards).forEach(({card}) => bin[0].push(card));
+    Object.values(data.mainboard.cards).forEach(({card}) => bin[card.type].push(card));
 
-    Object.entries(deckData.boards.commanders.cards).forEach(([_, card]) => {
-        card.card.type = 0;
-        console.log(card.card.type)
-        if (!(card.card.type in board)) {
-            board[card.card.type] = [];
+    //create ontainer element
+    const deck = document.getElementById('deck');
+
+    Object.entries(bin).forEach(([cType, cArray]) => {
+        // skip it if we don't have that type
+        if (cArray.length == 0) {
+            return
         }
-        board[card.card.type].push(card)
-    });
-
-    Object.entries(deckData.boards.mainboard.cards).forEach(([_, card]) => {
-        if (!(card.card.type in board)) {
-            board[card.card.type] = [];
-        }
-        board[card.card.type].push(card)
-    });
-
-
-    Object.entries(board).forEach(([cardType, cardArray]) => {
-        
-        const typeBox = document.createElement('div');
-        typeBox.className = 'typeBox';
     
         const header = document.createElement('div');
         header.className = 'cardType';
-        header.textContent  = cardTypes[cardType]
+        header.textContent  = cardTypes[cType]
         deck.appendChild(header);
-        deck.appendChild(typeBox);
 
-        const extractedData = [];
-        const layoutExceptions = ['adventure', 'split']
-        
-        Object.entries(cardArray).forEach(([_, data]) => {
-            let cardID = data.card.id
-            if (data.card.card_faces.length > 0){
-                cardID = `face-${data.card.card_faces[0].id}`
-                console.log(data.card.layout)
-                if (layoutExceptions.includes(data.card.layout)) {
-                    cardID = data.card.id
-                }
-                console.log(data)
+        const content = document.createElement('div');
+        content.className = 'cardBox';
+        deck.appendChild(content);
+
+        // sort the cards aplhabetically
+        cArray.sort((a,b) => a.name > b.name);
+
+        // add images to the content div
+        cArray.map((card) => {
+
+            const imgBox = document.createElement('div');
+            imgBox.className = 'imgBox'
+            const cardImg = document.createElement('img');
+            cardImg.onclick = imageClick;
+            cardImg.alt = card.name;
+
+            // assume it's a one-sided card
+            cardImg.src = `https://assets.moxfield.net/cards/card-${card.id}-normal.webp`;
+            cardImg.dataset.type = cardTypes[cType];
+            cardImg.dataset.front = card.id;
+            cardImg.dataset.back = '';
+            // check for double faced cards but exclude certain types
+            if (card.card_faces.length > 0 && !(['adventure', 'split'].includes(card.layout))) {
+                cardImg.src = `https://assets.moxfield.net/cards/card-face-${card.card_faces[0].id}-normal.webp`;
+                cardImg.dataset.front = card.card_faces[0].id
+                cardImg.dataset.back = card.card_faces[1].id
             }
-            extractedData.push({
-                id: cardID, 
-                name: data.card.name
-            });
+
+            imgBox.appendChild(cardImg)
+            content.appendChild(imgBox);
         });
-
-        extractedData.sort((a,b) => a.name > b.name);
-        extractedData.map((card) => addImage(card.id, card.name, typeBox));
-
     });
     
+    // make sure they fit the window properly
     resizeImages()
 }
 
-function addImage(id, name, typeBox) {
-    const imgBox = document.createElement('div');
-    imgBox.className = 'imgBox'
-    const cardImg = document.createElement('img');
-    cardImg.src = `https://assets.moxfield.net/cards/card-${id}-normal.webp`;
-    cardImg.alt = name
-    cardImg.onclick = imageClick;
-    imgBox.appendChild(cardImg)
-    typeBox.appendChild(imgBox);
-}
 
 async function imageClick(event) {
-    console.log('clicked image')
-    console.log(event.target.src)
+    // css animation
     event.target.className = 'clicked';
     setTimeout(() => {
         event.target.classList.remove('clicked');
     }, 250);
 
+    // send request
     const response = await fetch(`${window.location}emit`, {
 		headers: {
 			'Content-Type': 'application/json',
 		},
 		method: "POST",
 		body: JSON.stringify({
-            image_name: event.target.alt,
-			image_url: event.target.src
+            type: event.target.dataset.type,
+            front_id: event.target.dataset.front,
+			back_id: event.target.dataset.back
 		}),
 	});
     if (response.status === 401) {

@@ -42,11 +42,6 @@ router.get('/callback',  withCookies, async (request, env) => {
 		}),
 	});
 	const authResp = await response.json();
-	console.log(authResp)
-
-	// if (!response.ok) {
-	// 	throw new Error(`HTTP error! status: ${response.status}`);
-	// }
 
 	// get user's ID 
 	response = await fetch('https://discord.com/api/v10/users/@me', {
@@ -56,7 +51,6 @@ router.get('/callback',  withCookies, async (request, env) => {
 		}
 	});
 	const user = await response.json();
-	console.log(user)
 
 	// get a list of guild IDs for the user
 	response = await fetch('https://discord.com/api/v10/users/@me/guilds', {
@@ -78,18 +72,18 @@ router.get('/callback',  withCookies, async (request, env) => {
 	const botGuildData = await response.json();
 
 	// determine which guild IDs the user and bot both belong to, sign it and add to response
-	const authorizedGuildIDs = [];
-	botGuildData.map((guild) => {
+	const authorizedGuildIDs = botGuildData.filter((guild) => {
 		if (userGuildIDs.includes(guild.id)) {
-			authorizedGuildIDs.push(guild.id)
+			return guild
 		}
-	});
+	}).map((guild) => guild.id);
 
-	console.log(request)
+	// console.log(request)
 	const r = new Response(null, {status: 302});
+	const cookieSettings = 'secure; HttpOnly; SameSite=Strict; Max-Age=3600'
 	r.headers.append('Location', request.url.split(request.route)[0]);
-	r.headers.append('Set-Cookie', `user_id=${cookieSigner.sign(user.id, env.DISCORD_CLIENT_SECRET)}; secure; HttpOnly; SameSite=Strict; Max-Age=3600`);
-	r.headers.append('Set-Cookie', `servers=${cookieSigner.sign(authorizedGuildIDs.join('_'), env.DISCORD_CLIENT_SECRET)}; secure; HttpOnly; SameSite=Strict; Max-Age=3600`);
+	r.headers.append('Set-Cookie', `user_id=${cookieSigner.sign(user.id, env.DISCORD_CLIENT_SECRET)}; ${cookieSettings}`);
+	r.headers.append('Set-Cookie', `servers=${cookieSigner.sign(authorizedGuildIDs.join('_'), env.DISCORD_CLIENT_SECRET)}; ${cookieSettings}`);
 	return r;
 
 });
@@ -100,17 +94,12 @@ router.post('/emit', withCookies, async (request, env) => {
 		return unauthorized
 	} 
 
-	const reqJSON = await request.json()
-	console.log(reqJSON)
+	const { type, front_id, back_id } = await request.json()
 
-	// go fetch info by ID from 
-	/// https://api2.moxfield.com/v3/cards/editions/${cardID}
-
-	const simpleMessage = {
-		content: `<@${request.cookies.user_id.split('.')[0]}> casts a [spell](${reqJSON.image_url})`,
-		allowed_mentions: {
-			parse: ["users"]
-		}
+	// build the message depending of if the card has 1 or 2 sides
+	let cardMarkdown = `casts a [${type.toLowerCase()}](https://assets.moxfield.net/cards/card-${front_id}-normal.webp)`
+	if (back_id !== '') {
+		cardMarkdown = `casts a [${type.toLowerCase()}](https://assets.moxfield.net/cards/card-face-${front_id}-normal.webp) that [flips](https://assets.moxfield.net/cards/card-face-${back_id}-normal.webp)`
 	}
 
 	const response = await fetch(`https://discord.com/api/v10/channels/${env.DISCORD_CHANNEL_ID}/messages`, {
@@ -119,11 +108,15 @@ router.post('/emit', withCookies, async (request, env) => {
 			Authorization: `Bot ${env.DISCORD_BOT_TOKEN}`
 		},
 		method: "POST",
-		body: JSON.stringify(simpleMessage)
+		body: JSON.stringify({
+			content: `<@${request.cookies.user_id.split('.')[0]}> ${cardMarkdown}`,
+			allowed_mentions: {
+				parse: ["users"]
+			}
+		})
 	});
 	const whatever = await response.json()
-	console.log(whatever)
-	return 'ok'
+	return new Response(null, {status: 201})
 });
 
 router.get('/auth-status', withCookies, (request, env) => {
@@ -135,18 +128,6 @@ router.get('/auth-status', withCookies, (request, env) => {
 	}
 });
 
-
 router.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default router
-
-
-// let example = 
-//   {
-//     description: "",
-//     fields: [],
-//     image: {
-//       url: "https://images-ext-1.discordapp.net/external/MSeHQK3-X4dckR9yJ_k-ZrHR7sQBa9JegVb2arpjvNw/https/spelltable.danielcigrang.workers.dev/_drc?format=webp&width=489&height=682"
-//     },
-//     color: 5462587
-//   }
