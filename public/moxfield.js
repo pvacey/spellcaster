@@ -14,6 +14,31 @@ const cardTypes = {
     8: 'Land'
 }
 
+/**
+ * Initial Page Load
+ */
+
+async function checkLogin() {
+    const response = await fetch(`${window.location}auth-status`);
+    if (response.status === 401) {
+        window.location = window.location + 'login'
+    } 
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // make sure the user is logged in
+	checkLogin();
+    // load their last deck
+    const deckID = localStorage.getItem('deckID');
+    if (deckID) {
+        loadDeck(deckID)
+    }
+});
+
+/**
+ * Card Resizing
+ */
+
 function sizeDown() {
     imageSize.value++
     resizeImages()
@@ -43,6 +68,9 @@ if (deck.getBoundingClientRect().width < 500) {
     imageSize.value = 2;
 }
 
+/**
+ * Deck Loading
+ */
 
 moxfieldInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -138,7 +166,6 @@ async function imageClick(event) {
         event.target.classList.remove('clicked');
     }, 250);
 
-    // send request
     const response = await fetch(`${window.location}emit`, {
 		headers: {
 			'Content-Type': 'application/json',
@@ -153,20 +180,4 @@ async function imageClick(event) {
     if (response.status === 401) {
         window.location = window.location + 'login'
     }
-}
-
-async function checkLogin() {
-    const response = await fetch(`${window.location}auth-status`);
-    if (response.status === 401) {
-        window.location = window.location + 'login'
-    } 
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-	checkLogin();
-});
-
-const deckID = localStorage.getItem('deckID');
-if (deckID) {
-    loadDeck(deckID)
 }
