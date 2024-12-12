@@ -146,26 +146,6 @@ router.post('/emit', withCookies, withContent, requireAuth, async (request, env)
 	return new Response(null, {status: 201})
 });
 
-// router.get('/deck/:deckID', withCookies, withContent, requireAuth, async ({params}) => {
-// 	try {
-// 		console.log(params.deckID)
-// 		const response = await fetch(`https://api2.moxfield.com/v3/decks/all/${params.deckID}`,{
-//   			credentials: 'include',
-// 			headers: {
-// 				'Accept': 'application/json',
-// 			}
-// 		});
-// 		const data = await response.text();
-		
-// 		console.log(data)
-// 		// return json( {}, {status: 200})
-// 	} catch (error) {
-// 		console.log(`error during deck fetch auth: ${error}`);
-// 		return new Response(error, { status: 500 });
-// 	}
-
-// });
-
 router.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default router
