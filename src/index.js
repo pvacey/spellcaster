@@ -146,6 +146,26 @@ router.post('/emit', withCookies, withContent, requireAuth, async (request, env)
 	return new Response(null, {status: 201})
 });
 
+/**
+ * Fetches the deck data given a Moxfield deck ID and returns it to the client.
+ * This works around CORS issue with the client requesting this directly.
+ */
+router.get('/deck/:deckID', withCookies, withContent, requireAuth, async ({params}) => {
+	try {
+		const response = await fetch(`https://api2.moxfield.com/v3/decks/all/${params.deckID}`,{
+			headers: {
+				'Accept': 'application/json',
+				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0'
+			}
+		});
+		return json( await response.json(), {status: 200})
+	} catch (error) {
+		console.log(`error during deck fetch auth: ${error}`);
+		return new Response(error, { status: 500 });
+	}
+
+});
+
 router.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default router

@@ -97,7 +97,7 @@ async function loadDeck(id) {
     // clear the page
     deck.innerHTML = '';
     // fetch the deck data, load images from it 
-    const response = await fetch(`https://corsproxy.io/?url=https://api2.moxfield.com/v3/decks/all/${id}`);
+    const response = await fetch(`${window.location}deck/${id}`);
     const {boards} = await response.json();
     loadImages(boards);
 }
