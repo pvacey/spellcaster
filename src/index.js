@@ -1,6 +1,5 @@
 import { AutoRouter, withContent, withCookies, json } from 'itty-router';
 import cookieSigner from 'cookie-signature';
-import { env } from 'cloudflare:test';
 
 const router = AutoRouter();
 
