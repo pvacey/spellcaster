@@ -65,7 +65,7 @@ img {
     box-shadow: 0px 0px 10px rgb(102, 102, 102);
 }
 
-.typeBox {
+.cardBox {
     /* padding-top: 10px; */
     display: flex;
     flex-wrap: wrap;
@@ -111,6 +111,7 @@ img {
 }
 
 .sliderContainer {
+    pointer-events: none; 
     /* box-sizing: border-box; */
     position: fixed; /* Set the navbar to fixed position */
     width: 100%;
@@ -120,18 +121,11 @@ img {
     justify-content: center; /* Centers the child horizontally */
     align-items: center;
     z-index: 1;
-
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-
+    user-select: none;
 }
 
 .sliderBorder {
+    pointer-events: auto; 
     border-radius: 40px;
     padding: 20px;
     background-color: rgb(255, 255, 255);
