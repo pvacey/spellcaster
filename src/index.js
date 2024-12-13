@@ -98,7 +98,7 @@ router.get('/callback', async (request, env) => {
 
 		// give the user some signed cookies to store relevant data
 		const redirect_response = new Response(null, {status: 302});
-		const cookieSettings = 'secure; HttpOnly; SameSite=Strict; Max-Age=3600'
+		const cookieSettings = 'secure; HttpOnly; SameSite=Strict; Max-Age=21600'
 		redirect_response.headers.append('Location', request.url.split(request.route)[0]);
 		redirect_response.headers.append(
 			'Set-Cookie', 
