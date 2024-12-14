@@ -100,7 +100,7 @@ async function loadDeck(id) {
 	// clear the page
 	deck.innerHTML = '';
 	// fetch the deck data, load images from it
-	const response = await fetch('/deck/${id}');
+	const response = await fetch(`/deck/${id}`);
 	const { boards } = await response.json();
 	loadImages(boards);
 }
@@ -149,7 +149,8 @@ function loadImages(data) {
 			const imgBox = document.createElement('div');
 			imgBox.className = 'imgBox';
 			const cardImg = document.createElement('img');
-			cardImg.onclick = imageClick;
+			cardImg.className = 'card';
+			cardImg.onclick = (event) => discordMessage(event.target, event.target.dataset.type === 'Land' ? 'plays' : 'casts');
 			cardImg.alt = card.name;
 
 			// assume it's a one-sided card
@@ -174,17 +175,18 @@ function loadImages(data) {
 	resizeImages();
 }
 
-async function imageClick(event) {
+async function discordMessage(card, verb) {
 	// css animation
-	event.target.className = 'clicked';
+	card.classList.add('clicked');
 	setTimeout(() => {
-		event.target.classList.remove('clicked');
+		card.classList.remove('clicked');
 	}, 250);
 
 	const body = JSON.stringify({
-		type: event.target.dataset.type,
-		front_id: event.target.dataset.front,
-		back_id: event.target.dataset.back,
+		verb: verb,
+		type: card.dataset.type,
+		front_id: card.dataset.front,
+		back_id: card.dataset.back,
 	});
 
 	const response = await fetch('/emit', {
@@ -198,3 +200,35 @@ async function imageClick(event) {
 		window.location = 'login';
 	}
 }
+
+function hideMenu() {
+    document.getElementById("contextMenu").style.display = "none"
+}
+
+function rightClick(e) {
+    e.preventDefault();
+    if (e.target.className !== 'card') {
+        return
+    }
+
+    targetCard = e.target;
+
+    if (document.getElementById("contextMenu").style.display == "block")
+        hideMenu()
+    else {
+        let menu = document.getElementById("contextMenu")
+        menu.style.display = 'block';
+        menu.style.left = e.pageX + "px";
+        menu.style.top = e.pageY + "px";
+    }
+}
+
+function contextMenuClick({target: {textContent}}) {
+    discordMessage(targetCard, `${textContent}s`)
+}
+
+document.onclick = hideMenu;
+document.oncontextmenu = rightClick;
+const contextMenu = document.getElementById('contextMenu');
+contextMenu.onclick = contextMenuClick;
+let targetCard = null;
