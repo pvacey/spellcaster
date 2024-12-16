@@ -16,9 +16,9 @@ const cardTypes = {
 };
 
 /**
- * Initial Page Load
+ * Checks if the user is logged in.
+ * If not, redirects to the login page.
  */
-
 async function checkLogin() {
 	const response = await fetch('/auth-status');
 	if (response.status === 401) {
@@ -106,6 +106,10 @@ async function loadDeck(id) {
 }
 
 function loadImages(data) {
+	if (!data) {
+		// fail fast if there isnt a response
+		return;
+	}
 	// sorting bin, an array per card type
 	const bin = {};
 	Object.keys(cardTypes).forEach((typeID) => (bin[typeID] = []));
@@ -166,6 +170,10 @@ function loadImages(data) {
 				cardImg.dataset.back = back;
 			}
 
+			cardImg.addEventListener('mouseup', (_e) => {
+				document.getElementById('audio').play();
+			});
+
 			imgBox.appendChild(cardImg);
 			content.appendChild(imgBox);
 		});
@@ -202,29 +210,29 @@ async function discordMessage(card, verb) {
 }
 
 function hideMenu() {
-    document.getElementById("contextMenu").style.display = "none"
+	document.getElementById('contextMenu').style.display = 'none';
 }
 
 function rightClick(e) {
-    e.preventDefault();
-    if (e.target.className !== 'card') {
-        return
-    }
+	e.preventDefault();
+	if (e.target.className !== 'card') {
+		return;
+	}
 
-    targetCard = e.target;
+	targetCard = e.target;
 
-    if (document.getElementById("contextMenu").style.display == "block")
-        hideMenu()
-    else {
-        let menu = document.getElementById("contextMenu")
-        menu.style.display = 'block';
-        menu.style.left = e.pageX + "px";
-        menu.style.top = e.pageY + "px";
-    }
+	if (document.getElementById('contextMenu').style.display == 'block') {
+		hideMenu();
+	} else {
+		let menu = document.getElementById('contextMenu');
+		menu.style.display = 'block';
+		menu.style.left = e.pageX + 'px';
+		menu.style.top = e.pageY + 'px';
+	}
 }
 
-function contextMenuClick({target: {textContent}}) {
-    discordMessage(targetCard, `${textContent}s`)
+function contextMenuClick({ target: { textContent } }) {
+	discordMessage(targetCard, `${textContent}s`);
 }
 
 document.onclick = hideMenu;
