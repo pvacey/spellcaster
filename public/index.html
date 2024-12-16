@@ -2,51 +2,52 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-        rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+		integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+		rel="stylesheet">
 </head>
 
 <body>
 
-    <div id="contextMenu" class="context-menu" style="display:none">
-        <ul>
-            <li>mention</li>
-            <li>discard</li>
-            <li>exile</li>
-            <li>return</li>
-            <li>sacrifice</li>
-            <li>cast</li>
-        </ul>
-    </div>
+	<div id="contextMenu" class="context-menu" style="display:none">
+		<ul>
+			<li>Mention</li>
+			<li>Discard</li>
+			<li>Exile</li>
+			<li>Return</li>
+			<li>Sacrifice</li>
+			<li>Cast</li>
+		</ul>
+	</div>
 
-    <div id="nav" class="nav">
-        <div class="title">SpellCaster™</div>
-        <div>
-            <label for="search-input">
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </label>
-            <input type="text" id="moxfieldInput" placeholder="Paste moxfield deck...">
-        </div>
-    </div>
+	<header id="nav" class="nav">
+		<h1 class="title">SpellCaster™</h1>
+		<div>
+			<label for="search-input">
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</label>
+			<input type="text" id="moxfieldInput" placeholder="Paste Moxfield deck...">
+		</div>
+	</header>
 
-    <div class="sliderContainer">
-        <div class="sliderBorder">
-            <i class="fa fa-minus" aria-hidden="true" onclick="sizeDown()"></i>
-            <input type="range" id="imageSize" name="imageSize" min="1" max="15" value="8" step="1" />
-            <i class="fa fa-plus" aria-hidden="true" onclick="sizeUp()"></i>
-        </div>
-    </div>
+	<div class="sliderContainer">
+		<div class="sliderBorder">
+			<i class="fa fa-minus" aria-hidden="true" onclick="sizeDown()"></i>
+			<input type="range" id="imageSize" name="imageSize" min="1" max="15" value="8" step="1" />
+			<i class="fa fa-plus" aria-hidden="true" onclick="sizeUp()"></i>
+		</div>
+	</div>
 
-    <div id="deck" class="deck"></div>
+	<main id="deck" class="deck"></main>
+	<audio id="audio" src="click.mp3" preload="auto"></audio>
 </body>
 
 <script src="moxfield.js"></script>
