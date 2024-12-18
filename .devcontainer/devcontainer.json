@@ -11,7 +11,11 @@
 	"runArgs": ["--network=host"],
 	"customizations": {
 		"vscode": {
-			"extensions": ["Codeium.codeium", "esbenp.prettier-vscode"]
+			"extensions": [
+				"Codeium.codeium",
+				"esbenp.prettier-vscode",
+				"EditorConfig.EditorConfig"
+			]
 		}
 	}
 	// Features to add to the dev container. More info: https://containers.dev/features.
