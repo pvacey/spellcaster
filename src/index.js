@@ -45,7 +45,7 @@ router.get('/login', async (_, env) => {
  * Find guild IDs shared by both the bot and the user.
  * Return the user to "/" along with signed cookies for user ID and shared guild membership.
  */
-router.get('/callback', async ({ query: { code } }, env) => {
+router.get('/callback', async (request, env) => {
 	try {
 		// take the code from the redirect and request an access token
 		const token_response = await fetch('https://discord.com/api/v10/oauth2/token', {
@@ -56,7 +56,7 @@ router.get('/callback', async ({ query: { code } }, env) => {
 			body: new URLSearchParams({
 				client_id: env.DISCORD_CLIENT_ID,
 				client_secret: env.DISCORD_CLIENT_SECRET,
-				code,
+				code: request.query.code,
 				grant_type: 'authorization_code',
 				redirect_uri: env.DISCORD_REDIRECT_URI,
 			}),
@@ -118,15 +118,17 @@ router.get('/callback', async ({ query: { code } }, env) => {
  * Sends a message to Discord describing a MTG card.
  */
 router.post('/emit', withCookies, withContent, requireAuth, async (request, env) => {
-	const { type, front_id, back_id } = await request.content;
 
+	const { verb, type, front_id, back_id } = await request.content;
+	const cardType = type.toLowerCase();
+	
 	// build the message depending of if the card has 1 or 2 sides
-	let cardMarkdown = `${
-		type.toLowerCase() === 'land' ? 'plays' : 'casts'
-	} a [${type.toLowerCase()}](https://assets.moxfield.net/cards/card-${front_id}-normal.webp)`;
-	if (back_id) {
-		cardMarkdown = `casts a [${type.toLowerCase()}](https://assets.moxfield.net/cards/card-face-${front_id}-normal.webp) that [flips](https://assets.moxfield.net/cards/card-face-${back_id}-normal.webp)`;
-	}
+	let cardMarkdown = `${verb} ${
+		['a','e','i'].includes(cardType[0]) ? 'an' : 'a'
+	} [${cardType}](https://assets.moxfield.net/cards/card-${front_id}-normal.webp)`;
+		if (back_id) {
+			cardMarkdown = `casts a [${cardType}](https://assets.moxfield.net/cards/card-face-${front_id}-normal.webp) that [flips](https://assets.moxfield.net/cards/card-face-${back_id}-normal.webp)`;
+		}
 
 	await fetch(`https://discord.com/api/v10/channels/${env.DISCORD_CHANNEL_ID}/messages`, {
 		headers: {
