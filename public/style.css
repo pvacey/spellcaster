@@ -9,13 +9,13 @@ html, body {
 }
 
 body {
-    /* background-color: #eff7d3; */
+    font-family: "Roboto", serif;
     margin-top: calc(var(--nav-height) + 20px);
     background-color:#f1f1f1;
 }
 
 .nav {
-    
+
     box-sizing: border-box;
     position: fixed;
     z-index: 1;
@@ -35,14 +35,21 @@ body {
 }
 
 .title {
-    font-family: "Roboto", serif;
     font-weight: 500;
     font-style: normal;
     font-size: xx-large;
 }
+
+.historyButton {
+    padding: 10px;
+    border: #eff7d3 1px solid;
+    border-radius: 5px;
+    user-select: none;
+    cursor: pointer;
+}
+
 .cardType {
     /* text-align: center; */
-    font-family: "Roboto", serif;
     font-weight: 300;
     font-style: normal;
     font-size: x-large;
@@ -59,7 +66,7 @@ body {
 
 }
 
-img {
+.card {
     width: 100%;
     border-radius: var(--image-radius);
     box-shadow: 0px 0px 10px rgb(102, 102, 102);
@@ -69,6 +76,7 @@ img {
     /* padding-top: 10px; */
     display: flex;
     flex-wrap: wrap;
+    cursor: pointer;
 }
 
 .deck {
@@ -89,7 +97,7 @@ img {
 
 #moxfieldInput {
     /* font-style: italic; */
-    font-family: "Roboto", serif;
+    /* font-family: "Roboto", serif; */
     /* width: 400px; */
     height: 30px;
     border-radius: 5px;
@@ -102,7 +110,7 @@ img {
 
 .fa-plus{
     cursor: pointer;
-  } 
+  }
 .fa-minus {
     cursor: pointer;
 }
@@ -111,7 +119,7 @@ img {
 }
 
 .sliderContainer {
-    pointer-events: none; 
+    pointer-events: none;
     /* box-sizing: border-box; */
     position: fixed; /* Set the navbar to fixed position */
     width: 100%;
@@ -125,7 +133,7 @@ img {
 }
 
 .sliderBorder {
-    pointer-events: auto; 
+    pointer-events: auto;
     border-radius: 40px;
     padding: 20px;
     background-color: rgb(255, 255, 255);
@@ -161,7 +169,7 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
     box-shadow: 0px 0px 5px black;
 }
-  
+
 
 .clicked {
     -webkit-animation-name: cssAnimation;
@@ -171,7 +179,7 @@ input[type="range"]::-moz-range-thumb {
     /* -webkit-animation-fill-mode: backwards; */
     /* transition: z-index 2s; */
   }
-  
+
 @-webkit-keyframes cssAnimation {
     from {
         -webkit-transform: rotate(0deg) scale(.90) skew(0deg);
@@ -194,7 +202,6 @@ input[type="range"]::-moz-range-thumb {
     margin: 0px;
     min-width: 150px;
     list-style: none;
-    font-family: "Roboto", serif;
     font-weight: 300;
     font-style: normal;
     border: 1px solid #535a3b;
@@ -202,10 +209,11 @@ input[type="range"]::-moz-range-thumb {
 
 .context-menu ul li {
     padding-bottom: 7px;
-    padding-top: 7px;   
+    padding-top: 7px;
 }
 
 .context-menu li {
+    cursor: pointer;
     padding-left:20px;
     border-bottom: 1px solid #535a3b;
 }
@@ -218,4 +226,64 @@ input[type="range"]::-moz-range-thumb {
     color: #eff7d3;
     background: #535a3b;
     cursor: default;
+}
+
+.hidden {
+    display: none;
+}
+
+.deckMenu {
+    margin: 20px;
+}
+
+.deckMenuItem {
+    box-sizing: border-box;
+
+    width: 100%;          /* Scale to the available width */
+    max-width: 600px;     /* But not exceed 500px */
+    margin: 0 auto;       /* Center the div horizontally (optional) */
+
+    font-weight: 300;
+    font-style: normal;
+    font-size: x-large;
+
+    padding: 10px;
+    margin-top:10px;
+    margin-bottom:10px;
+    border: solid 2px #535a3b;
+    border-radius: 10px;
+
+    color: #535a3b;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.menuContent {
+    display: flex;
+    gap: 20px;
+}
+
+.thumbnail {
+    max-width: 120px;
+    height: auto;
+    border: solid 2px #535a3b;
+    border-radius: 10px;
+}
+
+.manaSymbol {
+    width: 25px;
+    height: 25px;
+    /* box-shadow: 0px 0px 5px black; */
+    border: black 2px solid;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-right:5px;
+}
+
+.fa-trash {
+    margin-top:auto;
+    margin-left:auto;
+    color: rgb(204, 48, 0);
 }

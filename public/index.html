@@ -30,6 +30,11 @@
 
     <div id="nav" class="nav">
         <div class="title">SpellCaster™</div>
+        <div class="historyButton" id="historyButton">
+            Recent Decks
+            <i class="fa fa-history" aria-hidden="true"></i>
+        </div>
+
         <div>
             <label for="search-input">
                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -38,7 +43,7 @@
         </div>
     </div>
 
-    <div class="sliderContainer">
+    <div class="sliderContainer" id="sliderContainer">
         <div class="sliderBorder">
             <i class="fa fa-minus" aria-hidden="true" onclick="sizeDown()"></i>
             <input type="range" id="imageSize" name="imageSize" min="1" max="15" value="8" step="1" />
@@ -47,6 +52,7 @@
     </div>
 
     <div id="deck" class="deck"></div>
+    <div id="deckMenu" class="deckMenu"></div>
 </body>
 
 <script src="moxfield.js"></script>
