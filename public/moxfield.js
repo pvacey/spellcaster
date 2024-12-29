@@ -86,9 +86,10 @@ moxfieldInput.addEventListener('keydown', function (e) {
 function processURL() {
 	const message = moxfieldInput.value.trim();
 	if (message !== '') {
-		const urlMatch = message.match(/https:\/\/www\.moxfield\.com\/decks\/([^\/]+)/);
-		if (urlMatch.length === 2) {
-			const [_, deckID] = urlMatch;
+		const urlMatch = message.match(/https:\/\/(www\.)?moxfield\.com\/decks\/([^\/]+)/);
+        console.log(urlMatch)
+		if (urlMatch.length === 3) {
+			const [_, www, deckID] = urlMatch;
 			loadDeck(deckID);
 			localStorage.setItem('deckID', deckID);
 		}
