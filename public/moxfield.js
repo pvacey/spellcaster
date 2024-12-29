@@ -195,7 +195,6 @@ async function loadDeck(id) {
 	loadImages(data.boards);
 
     const history = JSON.parse(localStorage.getItem('history')) ?? {}
-    console.log(Object.values(data.boards.commanders.cards))
 
     const featuredID =  data.boards.commanders.count > 0 ? Object.values(data.boards.commanders.cards)[0].card.id : data.main.id
 

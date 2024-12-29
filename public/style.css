@@ -32,6 +32,7 @@ body {
     /* background-color: rgb(122, 122, 122); */
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
 .title {
@@ -46,6 +47,7 @@ body {
     border-radius: 5px;
     user-select: none;
     cursor: pointer;
+    margin-left: auto;
 }
 
 .cardType {
@@ -94,6 +96,12 @@ body {
     filter:brightness(1.2);
 }
 
+.navContent {
+    gap: 20px;
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+}
 
 #moxfieldInput {
     /* font-style: italic; */
