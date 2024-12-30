@@ -1,10 +1,10 @@
 // Get DOM elements
 const moxfieldInput = document.getElementById('moxfieldInput');
 const imageSize = document.getElementById('imageSize');
-const inbox = document.getElementById('inbox');
 const deck = document.getElementById('deck');
-const historyButton = document.getElementById('historyButton');
+const deckButton = document.getElementById('deckButton');
 const deckMenu = document.getElementById('deckMenu');
+const deckList = document.getElementById('deckList');
 const sliderContainer = document.getElementById('sliderContainer');
 const cardTypes = {
 	0: 'Commander',
@@ -51,23 +51,23 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (deckID) {
 		loadDeck(deckID);
 	} else {
-        loadHistory();
+        loadDecks();
     }
     addNavOffset()
 });
 
 
-function loadHistory() {
+function loadDecks() {
     try {
         deck.classList.add('hidden');
         sliderContainer.classList.add('hidden');
         deckMenu.classList.remove('hidden');
-        deckMenu.innerHTML = '';
+        deckList.innerHTML = '';
 
         const deckMeta = JSON.parse(localStorage.getItem('history'));
         Object.entries(deckMeta).forEach(([id, meta]) => {
             const menuItem = document.createElement('div');
-            menuItem.className = 'deckMenuItem';
+            menuItem.className = 'deckListItem';
             menuItem.onclick = (event) => loadDeck(id);
 
             const menuContent = document.createElement('div');
@@ -107,13 +107,13 @@ function loadHistory() {
                 delete history[event.target.id];
                 localStorage.setItem('history', JSON.stringify(history));
                 localStorage.removeItem('deckID');
-                loadHistory()
+                loadDecks()
                 event.stopPropagation()
             }
             menuItem.append(menuContent)
             menuItem.append(deleteButton)
 
-            deckMenu.appendChild(menuItem);
+            deckList.appendChild(menuItem);
         });
 
         deck.innerHTML = '';
@@ -123,7 +123,7 @@ function loadHistory() {
 
 }
 
-historyButton.onclick = () => loadHistory()
+deckButton.onclick = () => loadDecks()
 
 /**
  * Card Resizing
@@ -170,32 +170,25 @@ moxfieldInput.addEventListener('keydown', function (e) {
 	}
 });
 
-function processURL() {
+async function processURL() {
 	const message = moxfieldInput.value.trim();
 	if (message !== '') {
 		const urlMatch = message.match(/https:\/\/(www\.)?moxfield\.com\/decks\/([^\/]+)/);
         console.log(urlMatch)
 		if (urlMatch.length === 3) {
 			const [_, www, deckID] = urlMatch;
-			loadDeck(deckID);
+			await importDeck(deckID);
+            loadDecks();
 		}
 	}
 	moxfieldInput.value = '';
 }
 
-async function loadDeck(id) {
-	// clear the page
-    deckMenu.classList.add('hidden');
-    deck.classList.remove('hidden');
-    sliderContainer.classList.remove('hidden');
-	deck.innerHTML = '';
-	// fetch the deck data, load images from it
+async function importDeck(id) {
 	const response = await fetch(`/deck/${id}`);
 	const data = await response.json();
-	loadImages(data.boards);
 
     const history = JSON.parse(localStorage.getItem('history')) ?? {}
-
     const featuredID =  data.boards.commanders.count > 0 ? Object.values(data.boards.commanders.cards)[0].card.id : data.main.id
 
     history[id] = {
@@ -212,7 +205,21 @@ async function loadDeck(id) {
     const sortedObj = Object.fromEntries(sortedEntries);
 
     localStorage.setItem('history', JSON.stringify(sortedObj))
+}
+
+async function loadDeck(id) {
+	// clear the page
+    deckMenu.classList.add('hidden');
+    deck.classList.remove('hidden');
+    sliderContainer.classList.remove('hidden');
+	deck.innerHTML = '';
+	// fetch the deck data, load images from it
+	const response = await fetch(`/deck/${id}`);
+	const data = await response.json();
+	loadImages(data.boards);
     localStorage.setItem('deckID', id);
+    // also update metadata
+    importDeck(id)
 }
 
 function loadImages(data) {

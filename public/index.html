@@ -30,18 +30,7 @@
 
     <div id="nav" class="nav">
         <div class="title">SpellCaster™</div>
-        <div class="navContent">
-            <div class="historyButton" id="historyButton">
-                Decks
-                <i class="fa fa-history" aria-hidden="true"></i>
-            </div>
-
-            <div>
-                <label for="search-input">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                </label>
-                <input type="text" id="moxfieldInput" placeholder="Paste moxfield deck...">
-            </div>
+        <div class="deckButton" id="deckButton">Decks
         </div>
     </div>
 
@@ -54,7 +43,17 @@
     </div>
 
     <div id="deck" class="deck"></div>
-    <div id="deckMenu" class="deckMenu"></div>
+    <div id="deckMenu" class="deckMenu hidden">
+        <div class="deckImport">
+            <label for="search-input" >
+                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                Import a New Deck
+            </label>
+            <input type="text" id="moxfieldInput" placeholder="Paste moxfield deck link...">
+        </div>
+        <div id="deckList" class="deckList"></div>
+    </div>
 </body>
 
 <script src="moxfield.js"></script>
