@@ -63,6 +63,7 @@ function loadDecks() {
         sliderContainer.classList.add('hidden');
         deckMenu.classList.remove('hidden');
         deckList.innerHTML = '';
+        localStorage.removeItem('deckID');
 
         const deckMeta = JSON.parse(localStorage.getItem('history'));
         Object.entries(deckMeta).forEach(([id, meta]) => {
@@ -106,7 +107,6 @@ function loadDecks() {
                 console.log(event)
                 delete history[event.target.id];
                 localStorage.setItem('history', JSON.stringify(history));
-                localStorage.removeItem('deckID');
                 loadDecks()
                 event.stopPropagation()
             }
